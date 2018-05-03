@@ -34,13 +34,13 @@ public class GUI extends javax.swing.JFrame {
             try (Scanner scanner =  new Scanner(path)){
               System.out.println("Scanning dictionary...");
               double wordNum = 0;
-              double size = 479000;
+              double size = 466544;
               while (scanner.hasNextLine()){
                 String word = scanner.nextLine();
                 words.add(new word(word,0));
                 wordNum++;
                 int progress = (int)(wordNum * 100/size);
-                System.out.println("[IMPORT] PROGRESS [" + progress + "%]");
+                System.out.println("[IMPORT] PROGRESS [" + progress + "%] " + (int)wordNum + "/" + (int)size);
               }
               //scanner.close();
             }
@@ -136,6 +136,8 @@ public class GUI extends javax.swing.JFrame {
     }//GEN-LAST:event_textInputActionPerformed
 
     private void buttonStartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonStartActionPerformed
+        System.out.println("Calculating...");
+        
         
         for(word Word : words){
             Word.calcScore(textInput.getText());
@@ -147,7 +149,9 @@ public class GUI extends javax.swing.JFrame {
         quicksort sort = new quicksort();
         sort.sort(listWords);
         for(word Words : sort.numbers){
-            System.out.println("[SCORE]: \"" + Words.word + "\"" + ", score: " + Words.score);
+            if(Words.score > 0){
+                System.out.println("[SCORE]: \"" + Words.word + "\"" + ", score: " + Words.score);
+            }
         }
     }//GEN-LAST:event_buttonStartActionPerformed
 
