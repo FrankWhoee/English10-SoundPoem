@@ -14,10 +14,21 @@ import javax.swing.DefaultListModel;
 
 public class GUI extends javax.swing.JFrame {
 
+    boolean isImported = false;
+    String textIdeal = "";
+    
     public static ArrayList<word> words = new ArrayList<word>();
     public GUI() {
-        double initTime = System.currentTimeMillis();
         initComponents();
+        
+             
+    }
+    
+    public void importDict(){
+        if(isImported){
+            return;
+        }
+        double initTime = System.currentTimeMillis();
         try{
             String os = System.getProperty("os.name").toLowerCase();
             Path path = Paths.get("src/words.txt");
@@ -37,12 +48,16 @@ public class GUI extends javax.swing.JFrame {
               System.out.println("Scanning dictionary...");
               double wordNum = 0;
               double size = 466544;
+              double prevProg = 0;
               while (scanner.hasNextLine()){
                 String word = scanner.nextLine();
                 words.add(new word(word,0));
                 wordNum++;
                 int progress = (int)(wordNum * 100/size);
-                System.out.println("[IMPORT] PROGRESS [" + progress + "%] " + (int)wordNum + "/" + (int)size);
+                if(progress != prevProg){
+                    System.out.println("[IMPORT] PROGRESS [" + progress + "%] " + (int)wordNum + "/" + (int)size);
+                }
+                prevProg = progress;
               }
               //scanner.close();
             }
@@ -51,9 +66,9 @@ public class GUI extends javax.swing.JFrame {
             
         }
         double endTime = System.currentTimeMillis();
-        labelBootTime.setText("Boot Time: " + ((endTime - initTime)/1000) + "s");     
+        labelImportTime.setText("Import Time: " + ((endTime - initTime)/1000) + "s");
+        isImported = true;
     }
-
     
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -67,11 +82,15 @@ public class GUI extends javax.swing.JFrame {
         displayList = new javax.swing.JList<>();
         textConsole1 = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
-        labelBootTime = new javax.swing.JLabel();
+        labelImportTime = new javax.swing.JLabel();
         labelCalcTime = new javax.swing.JLabel();
         labelAverageScore = new javax.swing.JLabel();
         labelHighestScore = new javax.swing.JLabel();
         labelViableWords = new javax.swing.JLabel();
+        textScore = new javax.swing.JTextField();
+        jLabel4 = new javax.swing.JLabel();
+        labelIdeal = new javax.swing.JLabel();
+        textScoreWord = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -88,12 +107,22 @@ public class GUI extends javax.swing.JFrame {
         jLabel2.setText("Enter your word/name here:");
 
         textInput.setText("Your word/name...");
+        textInput.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                textInputMouseClicked(evt);
+            }
+        });
         textInput.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 textInputActionPerformed(evt);
             }
         });
 
+        displayList.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                displayListMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(displayList);
 
         textConsole1.setEditable(false);
@@ -107,7 +136,7 @@ public class GUI extends javax.swing.JFrame {
 
         jLabel3.setText("STATISTICS:");
 
-        labelBootTime.setText("Boot Time:");
+        labelImportTime.setText("Import Time:");
 
         labelCalcTime.setText("Calculation Time:");
 
@@ -117,6 +146,20 @@ public class GUI extends javax.swing.JFrame {
 
         labelViableWords.setText("Number of Viable Words: ");
 
+        textScore.setText("0");
+        textScore.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                textScoreActionPerformed(evt);
+            }
+        });
+
+        jLabel4.setFont(new java.awt.Font("Ubuntu", 1, 15)); // NOI18N
+        jLabel4.setText("Scoring:");
+
+        labelIdeal.setText("Ideal String:");
+
+        textScoreWord.setText("Word:");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -124,23 +167,31 @@ public class GUI extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(textConsole1, javax.swing.GroupLayout.DEFAULT_SIZE, 692, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 523, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel2)
-                            .addComponent(textInput, javax.swing.GroupLayout.PREFERRED_SIZE, 274, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(buttonStart, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel3)
-                            .addComponent(labelBootTime)
-                            .addComponent(labelCalcTime)
-                            .addComponent(labelAverageScore)
-                            .addComponent(labelHighestScore)
-                            .addComponent(labelViableWords))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(jLabel2)
+                        .addComponent(textInput, javax.swing.GroupLayout.PREFERRED_SIZE, 274, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(buttonStart, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel3)
+                        .addComponent(labelImportTime)
+                        .addComponent(labelCalcTime)
+                        .addComponent(labelAverageScore)
+                        .addComponent(labelHighestScore)
+                        .addComponent(labelViableWords)
+                        .addComponent(textConsole1, javax.swing.GroupLayout.PREFERRED_SIZE, 591, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 391, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(textScore, javax.swing.GroupLayout.PREFERRED_SIZE, 139, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGroup(layout.createSequentialGroup()
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 2, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(textScoreWord)
+                                        .addComponent(jLabel4))))))
+                    .addComponent(labelIdeal))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 363, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 292, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -149,17 +200,28 @@ public class GUI extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel4)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(textScoreWord)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(textScore, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(12, 12, 12))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                         .addComponent(jLabel2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(textInput, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(buttonStart, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(143, 143, 143)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 174, Short.MAX_VALUE)
                         .addComponent(jLabel3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(labelBootTime)
+                        .addComponent(labelIdeal)
+                        .addGap(3, 3, 3)
+                        .addComponent(labelImportTime)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(labelCalcTime)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -168,8 +230,8 @@ public class GUI extends javax.swing.JFrame {
                         .addComponent(labelHighestScore)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(labelViableWords)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 74, Short.MAX_VALUE)
-                        .addComponent(textConsole1, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(textConsole1, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
 
@@ -177,11 +239,14 @@ public class GUI extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void textInputActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textInputActionPerformed
-        textInput.setText("");
+        
     }//GEN-LAST:event_textInputActionPerformed
 
     private void buttonStartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonStartActionPerformed
         System.out.println("Calculating...");
+        textIdeal = textInput.getText();
+        labelIdeal.setText(textIdeal);
+        importDict();
         double initTime = System.currentTimeMillis();
         for(word Word : words){
             Word.calcScore(textInput.getText());
@@ -192,21 +257,23 @@ public class GUI extends javax.swing.JFrame {
         }
         quicksort sort = new quicksort();
         sort.sort(listWords);
-        //for(word Words : sort.numbers){
-            //if(Words.score > 0){
-                //System.out.println("[SCORE]: \"" + Words.word + "\"" + ", score: " + Words.score);
-            //}
-        //}
         
         String[] convert = new String[sort.numbers.length];
         double average = 0;
-        
+        double highestScore = 0;
+        int viableWords = 0;
         for(int i = 0; i < sort.numbers.length; i++){
             convert[i] = sort.numbers[i].word;
+            if(sort.numbers[i].score > highestScore){
+                highestScore = sort.numbers[i].score;
+            }
+            if(sort.numbers[i].score > 0){
+                viableWords++;
+            }
             average += sort.numbers[i].score;
         }
         List<String> display = Arrays.asList(convert);
-        //Collections.reverse(display);
+        Collections.reverse(display);
         average = average/sort.numbers.length;
         DefaultListModel listModel = new DefaultListModel();
         for (int i = 0; i < display.size(); i++)
@@ -217,12 +284,30 @@ public class GUI extends javax.swing.JFrame {
         
         double endTime = System.currentTimeMillis();
         labelCalcTime.setText("Calculation Time: " + ((endTime - initTime)/1000) + "s");
-        labelAverageScore.setText("Average Score: " + average);  
+        labelAverageScore.setText("Average Score: " + Double.toString(average).substring(0,5));  
+        labelHighestScore.setText("Highest Score: " + highestScore);
+        labelViableWords.setText("Number of Viable Words: " + viableWords);  
     }//GEN-LAST:event_buttonStartActionPerformed
 
     private void textConsole1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textConsole1ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_textConsole1ActionPerformed
+
+    private void textInputMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_textInputMouseClicked
+        textInput.setText("");
+    }//GEN-LAST:event_textInputMouseClicked
+
+    private void displayListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_displayListMouseClicked
+        String selected = displayList.getSelectedValue();
+        word W = new word(selected,0);
+        W.calcScore(textIdeal);
+        textScore.setText("" + W.score);
+        textScoreWord.setText("Word: " + W.word);
+    }//GEN-LAST:event_displayListMouseClicked
+
+    private void textScoreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textScoreActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_textScoreActionPerformed
 
     
     public static void main(String args[]) {
@@ -240,13 +325,17 @@ public class GUI extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel labelAverageScore;
-    private javax.swing.JLabel labelBootTime;
     private javax.swing.JLabel labelCalcTime;
     private javax.swing.JLabel labelHighestScore;
+    private javax.swing.JLabel labelIdeal;
+    private javax.swing.JLabel labelImportTime;
     private javax.swing.JLabel labelViableWords;
     private javax.swing.JTextField textConsole1;
     private javax.swing.JTextField textInput;
+    private javax.swing.JTextField textScore;
+    private javax.swing.JLabel textScoreWord;
     // End of variables declaration//GEN-END:variables
 }

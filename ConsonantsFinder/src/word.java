@@ -19,17 +19,19 @@ public class word {
         String[] word = this.word.toUpperCase().split("");
         String[] Ideal = ideal.toUpperCase().split("");
         
-        String prev = "";
-        
         //For every letter of the word...
         for(String letter: word){
             //If this letter is a consonant...
             if(Ref.consonants.contains(letter)){
-                //if()
                 //Add it to the total amount of consonants
                 wordCons.add(letter);
-                prev = letter;
             } 
+        }
+        
+        for(String key : Ref.e.keySet()){
+            if(this.word.contains(key)){
+                wordCons.add(Ref.e.get(key));
+            }
         }
         
         if(wordCons.size() == 0){
@@ -43,6 +45,12 @@ public class word {
                 //Add it to the total amount of consonants
                 idealCons.add(letter);
             } 
+        }
+        
+        for(String key : Ref.e.keySet()){
+            if(ideal.contains(key)){
+                idealCons.add(Ref.e.get(key));
+            }
         }
         
             //For every consonant of the word...
