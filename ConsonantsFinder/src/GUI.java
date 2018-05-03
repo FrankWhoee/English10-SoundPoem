@@ -1,13 +1,18 @@
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.CodeSource;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 
 
@@ -28,23 +33,33 @@ public class GUI extends javax.swing.JFrame {
         if(isImported){
             return;
         }
-        System.out.println(System.getProperty("user.dir"));
+        CodeSource codeSource = GUI.class.getProtectionDomain().getCodeSource();
+        File jarFile = new File("");
+        try {
+            jarFile = new File(codeSource.getLocation().toURI().getPath());
+        } catch (URISyntaxException ex) {
+            Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        String jarDir = jarFile.getParentFile().getPath();
+        
+        System.out.println(jarDir);
         double initTime = System.currentTimeMillis();
         try{
             String os = System.getProperty("os.name").toLowerCase();
-            Path path = Paths.get("src/words.txt");
+            Path path = Paths.get(jarDir + "src/words.txt");
             System.out.println(path.toAbsolutePath());
+            
             System.out.println(os);
             if(os.indexOf("win") >= 0){
-                path = Paths.get("\\src\\words.txt");
+                path = Paths.get(jarDir + "\\src\\words.txt");
             }else if(os.indexOf("mac") >= 0){
-                path = Paths.get("src/words.txt");
+                path = Paths.get(jarDir + "src/words.txt");
             }else if(os.indexOf("nix") >= 0 || os.indexOf("nux") >= 0 || os.indexOf("aix") > 0){
-                path = Paths.get("src/words.txt");
+                path = Paths.get(jarDir + "src/words.txt");
             }else if(os.indexOf("sunos") >= 0){
-                path = Paths.get("src/words.txt");
+                path = Paths.get(jarDir + "src/words.txt");
             }
-
+            textPath.setText("" + path.toAbsolutePath());
             try (Scanner scanner =  new Scanner(path)){
               System.out.println("Scanning dictionary...");
               double wordNum = 0;
@@ -104,6 +119,8 @@ public class GUI extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
         labelIdeal = new javax.swing.JLabel();
         textScoreWord = new javax.swing.JLabel();
+        buttonPath = new javax.swing.JButton();
+        textPath = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -173,6 +190,15 @@ public class GUI extends javax.swing.JFrame {
 
         textScoreWord.setText("Word:");
 
+        buttonPath.setText("Get Path");
+        buttonPath.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonPathActionPerformed(evt);
+            }
+        });
+
+        textPath.setText(".");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -201,7 +227,9 @@ public class GUI extends javax.swing.JFrame {
                                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                         .addComponent(textScoreWord)
                                         .addComponent(jLabel4))))))
-                    .addComponent(labelIdeal))
+                    .addComponent(labelIdeal)
+                    .addComponent(buttonPath)
+                    .addComponent(textPath, javax.swing.GroupLayout.PREFERRED_SIZE, 573, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 292, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -229,7 +257,11 @@ public class GUI extends javax.swing.JFrame {
                         .addComponent(textInput, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(buttonStart, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 174, Short.MAX_VALUE)
+                        .addGap(18, 18, 18)
+                        .addComponent(textPath, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(buttonPath)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 97, Short.MAX_VALUE)
                         .addComponent(jLabel3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(labelIdeal)
@@ -329,6 +361,18 @@ public class GUI extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_textScoreActionPerformed
 
+    private void buttonPathActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonPathActionPerformed
+        CodeSource codeSource = GUI.class.getProtectionDomain().getCodeSource();
+        File jarFile = new File("");
+        try {
+            jarFile = new File(codeSource.getLocation().toURI().getPath());
+        } catch (URISyntaxException ex) {
+            Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        String jarDir = jarFile.getParentFile().getPath();
+        textPath.setText(jarDir);
+    }//GEN-LAST:event_buttonPathActionPerformed
+
     
     public static void main(String args[]) {
        
@@ -340,6 +384,7 @@ public class GUI extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton buttonPath;
     private javax.swing.JButton buttonStart;
     private javax.swing.JList<String> displayList;
     private javax.swing.JLabel jLabel1;
@@ -355,6 +400,7 @@ public class GUI extends javax.swing.JFrame {
     private javax.swing.JLabel labelViableWords;
     private javax.swing.JTextField textConsole1;
     private javax.swing.JTextField textInput;
+    private javax.swing.JTextField textPath;
     private javax.swing.JTextField textScore;
     private javax.swing.JLabel textScoreWord;
     // End of variables declaration//GEN-END:variables
