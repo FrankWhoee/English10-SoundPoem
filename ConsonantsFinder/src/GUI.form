@@ -25,14 +25,25 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                  <Component id="jLabel1" alignment="0" max="32767" attributes="0"/>
-                  <Component id="jLabel2" alignment="0" min="-2" max="-2" attributes="0"/>
-                  <Component id="textInput" alignment="0" min="-2" pref="274" max="-2" attributes="0"/>
-                  <Component id="buttonStart" alignment="0" min="-2" pref="99" max="-2" attributes="0"/>
-                  <Component id="textConsole" alignment="0" pref="523" max="32767" attributes="0"/>
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Component id="textConsole1" alignment="0" pref="692" max="32767" attributes="0"/>
+                  <Group type="102" attributes="0">
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="jLabel1" alignment="0" min="-2" pref="523" max="-2" attributes="0"/>
+                          <Component id="jLabel2" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="textInput" alignment="0" min="-2" pref="274" max="-2" attributes="0"/>
+                          <Component id="buttonStart" alignment="0" min="-2" pref="99" max="-2" attributes="0"/>
+                          <Component id="jLabel3" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="labelBootTime" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="labelCalcTime" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="labelAverageScore" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="labelHighestScore" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="labelViableWords" alignment="0" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                  </Group>
               </Group>
-              <EmptySpace max="32767" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
               <Component id="jScrollPane1" min="-2" pref="363" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -52,9 +63,20 @@
                       <Component id="textInput" min="-2" pref="46" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="buttonStart" min="-2" pref="39" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" pref="48" max="-2" attributes="0"/>
-                      <Component id="textConsole" min="-2" pref="365" max="-2" attributes="0"/>
-                      <EmptySpace min="0" pref="22" max="32767" attributes="0"/>
+                      <EmptySpace min="-2" pref="143" max="-2" attributes="0"/>
+                      <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="labelBootTime" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="labelCalcTime" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="labelAverageScore" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="labelHighestScore" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="labelViableWords" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace pref="74" max="32767" attributes="0"/>
+                      <Component id="textConsole1" min="-2" pref="86" max="-2" attributes="0"/>
                   </Group>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
@@ -99,7 +121,7 @@
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
       <SubComponents>
-        <Component class="javax.swing.JList" name="jList1">
+        <Component class="javax.swing.JList" name="displayList">
           <Properties>
             <Property name="model" type="javax.swing.ListModel" editor="org.netbeans.modules.form.editors2.ListModelEditor">
               <StringArray count="0"/>
@@ -111,11 +133,44 @@
         </Component>
       </SubComponents>
     </Container>
-    <Component class="javax.swing.JTextField" name="textConsole">
+    <Component class="javax.swing.JTextField" name="textConsole1">
       <Properties>
         <Property name="editable" type="boolean" value="false"/>
         <Property name="horizontalAlignment" type="int" value="0"/>
-        <Property name="text" type="java.lang.String" value="Welcome to Consonants Matcher v1.0.0. Click Start to begin."/>
+        <Property name="text" type="java.lang.String" value="Welcome to Consonants Matcher v1.0.0. Enter your name and click start to begin."/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="textConsole1ActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JLabel" name="jLabel3">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="STATISTICS:"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JLabel" name="labelBootTime">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Boot Time:"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JLabel" name="labelCalcTime">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Calculation Time:"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JLabel" name="labelAverageScore">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Average Score:"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JLabel" name="labelHighestScore">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Highest Score:"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JLabel" name="labelViableWords">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Number of Viable Words: "/>
       </Properties>
     </Component>
   </SubComponents>
