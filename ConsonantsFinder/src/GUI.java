@@ -28,6 +28,7 @@ public class GUI extends javax.swing.JFrame {
         if(isImported){
             return;
         }
+        System.out.println(System.getProperty("user.dir"));
         double initTime = System.currentTimeMillis();
         try{
             String os = System.getProperty("os.name").toLowerCase();
@@ -54,11 +55,21 @@ public class GUI extends javax.swing.JFrame {
                 words.add(new word(word,0));
                 wordNum++;
                 int progress = (int)(wordNum * 100/size);
-                if(progress != prevProg){
-                    System.out.println("[IMPORT] PROGRESS [" + progress + "%] " + (int)wordNum + "/" + (int)size);
+                String bar = "";
+                
+                if(progress != prevProg){    
+                    for(int i =0; i < (wordNum/40000) - 1; i++){
+                        bar += "=";
+                    }
+                    for(int i =0; i < ((size - wordNum)/40000) - 1; i++){
+                        bar += "-";
+                    }
+                    System.out.write(("[IMPORT] PROGRESS " + progress + "%[" + bar + "]" + (int)wordNum + "/" + (int)size + "\r").getBytes()); 
+                    Thread.sleep(10);
                 }
                 prevProg = progress;
               }
+              System.out.write(("\nIMPORT COMPLETE [100%]\n").getBytes());
               //scanner.close();
             }
            
@@ -68,6 +79,8 @@ public class GUI extends javax.swing.JFrame {
         double endTime = System.currentTimeMillis();
         labelImportTime.setText("Import Time: " + ((endTime - initTime)/1000) + "s");
         isImported = true;
+        
+        textConsole1.setText("Words imported.");
     }
     
     @SuppressWarnings("unchecked")
@@ -243,10 +256,10 @@ public class GUI extends javax.swing.JFrame {
     }//GEN-LAST:event_textInputActionPerformed
 
     private void buttonStartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonStartActionPerformed
-        System.out.println("Calculating...");
         textIdeal = textInput.getText();
         labelIdeal.setText(textIdeal);
         importDict();
+        System.out.println("Calculating...");
         double initTime = System.currentTimeMillis();
         for(word Word : words){
             Word.calcScore(textInput.getText());
@@ -257,8 +270,8 @@ public class GUI extends javax.swing.JFrame {
         }
         quicksort sort = new quicksort();
         sort.sort(listWords);
-        
         String[] convert = new String[sort.numbers.length];
+        
         double average = 0;
         double highestScore = 0;
         int viableWords = 0;
@@ -283,6 +296,13 @@ public class GUI extends javax.swing.JFrame {
         displayList.setModel(listModel);
         
         double endTime = System.currentTimeMillis();
+        System.out.println("CALCULATION COMPLETE.");
+        System.out.println("------------------PRINTING STATISTICS-------------------");
+        System.out.println("CALCULATION TIME: " + (endTime - initTime)/1000 + "s");
+        System.out.println("AVG SCORE: " + average);
+        System.out.println("HI-SCORE: " + highestScore);
+        System.out.println("NUM OF VIABLE WORDS: " + viableWords);
+        
         labelCalcTime.setText("Calculation Time: " + ((endTime - initTime)/1000) + "s");
         labelAverageScore.setText("Average Score: " + Double.toString(average).substring(0,5));  
         labelHighestScore.setText("Highest Score: " + highestScore);
