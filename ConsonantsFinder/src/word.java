@@ -31,6 +31,19 @@ public class word {
         for(String key : Ref.e.keySet()){
             if(this.word.contains(key)){
                 wordCons.add(Ref.e.get(key));
+                try{
+                    wordCons.remove(Character.toString(key.charAt(0)));
+                }catch(Exception e){
+                    //System.out.println();
+                    System.err.println("[ERROR]: " + this.word + " EXCEPTION: " + e.getMessage());
+                }
+                String temp = Character.toString(key.charAt(0));
+                wordCons.remove(temp);
+                try{
+                  wordCons.remove(Character.toString(key.charAt(1)));
+                }catch (Exception e){
+                  wordCons.add(temp);
+                }
             }
         }
         
@@ -50,16 +63,29 @@ public class word {
         for(String key : Ref.e.keySet()){
             if(ideal.contains(key)){
                 idealCons.add(Ref.e.get(key));
+                try{
+                    idealCons.remove(Character.toString(key.charAt(0)));
+                }catch(Exception e){
+                    System.err.println("[ERROR]: " + ideal + " EXCEPTION: " + e.getMessage());
+                }
+                String temp = Character.toString(key.charAt(0));
+                idealCons.remove(temp);
+                try{
+                  idealCons.remove(Character.toString(key.charAt(1)));
+                }catch (Exception e){
+                  idealCons.add(temp);
+                }
             }
         }
         
             //For every consonant of the word...
-            for(int i = 0; i < wordCons.size() - 1; i++){
+            for(int i = 0; i < wordCons.size(); i++){
                 //If the ideal word contains this consonant of this word...
                 try{
                     if(idealCons.contains(wordCons.get(i))){
                         //Add it to the matching consonants.
                         matchingCons.add(wordCons.get(i));
+                        //System.out.println(wordCons.get(i));
                     }
                 }catch (Exception e){
                     System.out.println("[ERROR]: " + this.word +" " + e.getMessage());

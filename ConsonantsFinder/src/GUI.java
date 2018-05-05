@@ -16,7 +16,6 @@ import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 
 
-
 public class GUI extends javax.swing.JFrame {
 
     boolean isImported = false;
@@ -24,6 +23,7 @@ public class GUI extends javax.swing.JFrame {
     
     public static ArrayList<word> words = new ArrayList<word>();
     public GUI() {
+        Ref.RefInit();
         initComponents();
         
              
@@ -47,17 +47,15 @@ public class GUI extends javax.swing.JFrame {
         try{
             String os = System.getProperty("os.name").toLowerCase();
             Path path = Paths.get(jarDir + "src/words.txt");
-            System.out.println(path.toAbsolutePath());
-            
-            System.out.println(os);
+            System.out.println("RUNNING " + os.toUpperCase());
             if(os.indexOf("win") >= 0){
                 path = Paths.get(jarDir + "\\src\\words.txt");
             }else if(os.indexOf("mac") >= 0){
-                path = Paths.get(jarDir + "src/words.txt");
+                path = Paths.get(jarDir + "/src/words.txt");
             }else if(os.indexOf("nix") >= 0 || os.indexOf("nux") >= 0 || os.indexOf("aix") > 0){
-                path = Paths.get(jarDir + "src/words.txt");
+                path = Paths.get(jarDir + "/src/words.txt");
             }else if(os.indexOf("sunos") >= 0){
-                path = Paths.get(jarDir + "src/words.txt");
+                path = Paths.get(jarDir + "/src/words.txt");
             }
             textPath.setText("" + path.toAbsolutePath());
             try (Scanner scanner =  new Scanner(path)){
@@ -383,7 +381,7 @@ public class GUI extends javax.swing.JFrame {
         
         double endTime = System.currentTimeMillis();
         System.out.println("CALCULATION COMPLETE.");
-        System.out.println("------------------PRINTING STATISTICS-------------------");
+        System.out.println("--------------------PRINTING STATISTICS--------------------");
         System.out.println("CALCULATION TIME: " + (endTime - initTime)/1000 + "s");
         System.out.println("AVG SCORE: " + average);
         System.out.println("HI-SCORE: " + highestScore);

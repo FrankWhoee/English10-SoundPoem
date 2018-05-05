@@ -12,7 +12,7 @@ public class Ref {
     //Execptions
     public static Map<String, String> e = new HashMap<String,String>();
     
-    public void RefInit(){
+    public static void RefInit(){
         //Key is weird combo
         //Value is letter that it sounds like
         e.put("PH","F");
