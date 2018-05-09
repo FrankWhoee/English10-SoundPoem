@@ -3,7 +3,10 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -14,12 +17,18 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
+import sun.misc.IOUtils;
+//import org.json.*;
+import com.google.gson.*;
+
 
 
 public class GUI extends javax.swing.JFrame {
 
     boolean isImported = false;
     String textIdeal = "";
+    String json = "";
+    boolean isDictImported = false;
     
     public static ArrayList<word> words = new ArrayList<word>();
     public GUI() {
@@ -29,7 +38,72 @@ public class GUI extends javax.swing.JFrame {
              
     }
     
-    public void importDict(){
+    public void importDict() throws Exception{
+        if(isDictImported){
+            return;
+        }
+        CodeSource codeSource = GUI.class.getProtectionDomain().getCodeSource();
+        File jarFile = new File("");
+        try {
+            jarFile = new File(codeSource.getLocation().toURI().getPath());
+        } catch (URISyntaxException ex) {
+            Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        String jarDir = jarFile.getParentFile().getPath();
+        
+        System.out.println(jarDir);
+        double initTime = System.currentTimeMillis();
+        String os = System.getProperty("os.name").toLowerCase();
+        Path path = Paths.get(jarDir + "src/dictionary.json");
+        if(os.indexOf("win") >= 0){
+            path = Paths.get(jarDir + "\\src\\dictionary.json");
+        }else if(os.indexOf("mac") >= 0){
+            path = Paths.get(jarDir + "/src/dictionary.json");
+        }else if(os.indexOf("nix") >= 0 || os.indexOf("nux") >= 0 || os.indexOf("aix") > 0){
+            path = Paths.get(jarDir + "/src/dictionary.json");
+        }else if(os.indexOf("sunos") >= 0){
+            path = Paths.get(jarDir + "/src/dictionary.json");
+        }
+        try (Scanner scanner =  new Scanner(path)){
+              System.out.println("Scanning definitions...");
+              System.out.println(" ");
+              int i = 0;
+              
+              while (scanner.hasNextLine()){
+                  i++;
+                  double endTime = System.currentTimeMillis();
+                  double duration = endTime - initTime;
+                System.out.write(("Importing line " + i + ". Process has taken " + duration/1000 + "s \r").getBytes());
+                
+                String line = scanner.nextLine();
+                //System.out.write((line + "\r").getBytes());
+                json += line;
+              }
+              System.out.write(("\nIMPORT COMPLETE [100%]\n").getBytes());
+              //scanner.close();
+            }
+        isDictImported = true;
+        
+    }
+    
+    public String getDefinition(String word){
+        try{
+            importDict();
+        }catch(Exception e){e.printStackTrace();}
+	JsonObject entireJSON = new JsonParser().parse(json).getAsJsonObject();  
+        //JsonArray def = entireJSON.get(word).getAsJsonArray();
+        
+        String definition = "";   
+        try{
+            definition = entireJSON.get(word).getAsString();            
+        }catch(Exception e){
+            e.printStackTrace();
+            definition = "\"" + word + "\" does not exist.";
+        }
+        return definition;
+    }
+    
+    public void importWords(){
         if(isImported){
             return;
         }
@@ -124,6 +198,11 @@ public class GUI extends javax.swing.JFrame {
         buttonTest = new javax.swing.JButton();
         textTestResult = new javax.swing.JTextField();
         buttonSetIdeal = new javax.swing.JButton();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        textDict = new javax.swing.JTextArea();
+        jLabel6 = new javax.swing.JLabel();
+        textDef = new javax.swing.JTextField();
+        buttonDef = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -226,6 +305,25 @@ public class GUI extends javax.swing.JFrame {
             }
         });
 
+        textDict.setColumns(20);
+        textDict.setRows(5);
+        jScrollPane2.setViewportView(textDict);
+
+        jLabel6.setText("Define a word:");
+
+        textDef.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                textDefActionPerformed(evt);
+            }
+        });
+
+        buttonDef.setText("Define");
+        buttonDef.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonDefActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -234,12 +332,6 @@ public class GUI extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(jLabel3)
-                        .addComponent(labelImportTime)
-                        .addComponent(labelCalcTime)
-                        .addComponent(labelAverageScore)
-                        .addComponent(labelHighestScore)
-                        .addComponent(labelViableWords)
                         .addComponent(textConsole1, javax.swing.GroupLayout.PREFERRED_SIZE, 591, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -252,23 +344,39 @@ public class GUI extends javax.swing.JFrame {
                                     .addComponent(buttonSetIdeal)))
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                    .addComponent(jLabel4)
+                                    .addGap(59, 59, 59))
+                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(textTest, javax.swing.GroupLayout.Alignment.TRAILING)
+                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                            .addComponent(buttonTest)
+                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                            .addComponent(textTestResult, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                    .addComponent(jLabel5))
                                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(textScore, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addGroup(layout.createSequentialGroup()
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 2, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(textScoreWord)
-                                            .addComponent(jLabel4))))
-                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(textTest, javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                        .addComponent(buttonTest)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(textTestResult, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                .addComponent(jLabel5))))
-                    .addComponent(labelIdeal)
-                    .addComponent(buttonPath)
-                    .addComponent(textPath, javax.swing.GroupLayout.PREFERRED_SIZE, 573, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(textScoreWord)))))
+                        .addComponent(labelViableWords)
+                        .addComponent(labelHighestScore)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 591, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(layout.createSequentialGroup()
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(labelImportTime)
+                                .addComponent(labelCalcTime)
+                                .addComponent(labelAverageScore)
+                                .addComponent(labelIdeal)
+                                .addComponent(jLabel3))
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                .addComponent(textDef)
+                                .addComponent(buttonDef, javax.swing.GroupLayout.DEFAULT_SIZE, 229, Short.MAX_VALUE)
+                                .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addComponent(textPath, javax.swing.GroupLayout.PREFERRED_SIZE, 573, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(buttonPath))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 292, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -283,28 +391,37 @@ public class GUI extends javax.swing.JFrame {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel4)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(textScoreWord)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(textScore, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(12, 12, 12))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                        .addComponent(jLabel2)
+                                .addComponent(textScore, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
+                                .addGap(0, 1, Short.MAX_VALUE)
+                                .addComponent(jLabel2)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(textInput, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(buttonStart, javax.swing.GroupLayout.DEFAULT_SIZE, 39, Short.MAX_VALUE)
-                                    .addComponent(buttonSetIdeal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addGap(18, 18, 18)
-                                .addComponent(textPath, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(buttonStart, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(buttonSetIdeal, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel5)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(buttonPath)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 97, Short.MAX_VALUE)
+                                .addComponent(textTest, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(buttonTest)
+                                    .addComponent(textTestResult, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(textPath, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(6, 6, 6)
+                        .addComponent(buttonPath)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jLabel3)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(labelIdeal)
@@ -313,22 +430,22 @@ public class GUI extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(labelCalcTime)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(labelAverageScore)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(labelHighestScore)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(labelViableWords)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(textConsole1, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(labelAverageScore))
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel5)
+                                .addGap(14, 14, 14)
+                                .addComponent(jLabel6)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(textTest, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(textDef, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(buttonTest)
-                                    .addComponent(textTestResult, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(0, 0, Short.MAX_VALUE)))))
+                                .addComponent(buttonDef)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(labelHighestScore)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(labelViableWords)
+                        .addGap(16, 16, 16)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(textConsole1, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
 
@@ -342,7 +459,7 @@ public class GUI extends javax.swing.JFrame {
     private void buttonStartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonStartActionPerformed
         textIdeal = textInput.getText();
         labelIdeal.setText(textIdeal);
-        importDict();
+        importWords();
         System.out.println("Calculating...");
         double initTime = System.currentTimeMillis();
         for(word Word : words){
@@ -403,10 +520,13 @@ public class GUI extends javax.swing.JFrame {
 
     private void displayListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_displayListMouseClicked
         String selected = displayList.getSelectedValue();
+        String definition = getDefinition(selected);
+        definition = fitString(definition);
         word W = new word(selected,0);
         W.calcScore(textIdeal);
         textScore.setText("" + W.score);
         textScoreWord.setText("Word: " + W.word);
+        textDict.setText(definition);
     }//GEN-LAST:event_displayListMouseClicked
 
     private void textScoreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textScoreActionPerformed
@@ -446,6 +566,25 @@ public class GUI extends javax.swing.JFrame {
         labelIdeal.setText("Ideal String: " + textIdeal);
     }//GEN-LAST:event_buttonSetIdealActionPerformed
 
+    private void textDefActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textDefActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_textDefActionPerformed
+
+    private void buttonDefActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonDefActionPerformed
+        String definition = getDefinition(textDef.getText());
+        definition = fitString(definition);
+        textDict.setText(definition);
+    }//GEN-LAST:event_buttonDefActionPerformed
+
+    public String fitString(String input){
+        String output = input;
+        for(int i = 0; i < output.length(); i++){
+            if(i % 110 == 0 && i != 0){
+                output = output.substring(0,i) + "\n " + output.substring(i);
+            }
+        } 
+        return output;
+    }
     
     public static void main(String args[]) {
        
@@ -457,6 +596,7 @@ public class GUI extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton buttonDef;
     private javax.swing.JButton buttonPath;
     private javax.swing.JButton buttonSetIdeal;
     private javax.swing.JButton buttonStart;
@@ -467,7 +607,9 @@ public class GUI extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JLabel labelAverageScore;
     private javax.swing.JLabel labelCalcTime;
     private javax.swing.JLabel labelHighestScore;
@@ -475,6 +617,8 @@ public class GUI extends javax.swing.JFrame {
     private javax.swing.JLabel labelImportTime;
     private javax.swing.JLabel labelViableWords;
     private javax.swing.JTextField textConsole1;
+    private javax.swing.JTextField textDef;
+    private javax.swing.JTextArea textDict;
     private javax.swing.JTextField textInput;
     private javax.swing.JTextField textPath;
     private javax.swing.JTextField textScore;
