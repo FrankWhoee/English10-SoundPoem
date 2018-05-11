@@ -1,30 +1,39 @@
-
-import com.google.gson.*;
-import java.io.InputStream;
 import java.net.URL;
-import java.net.URLConnection;
-import org.apache.commons.io.IOUtils;
-import java.util.ArrayList;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import org.w3c.dom.Document;
+
+
 
 public class DictionaryAPI {
-    private static String baseURL  = "http://dictionaryapi.herokuapp.com/";
-    
-    public DictionaryAPI(){
-        
+
+    private final static String baseURL = "https://www.dictionaryapi.com/api/v1/references/collegiate/xml/";
+    private final static String APIkey = "1def8004-9684-4a1b-869d-857bf2c307d3";
+
+    public DictionaryAPI() {
+
     }
-    
-    public String define(String word) throws Exception{
-        URL url = new URL(baseURL + "?define=" + word);
-        URLConnection con = url.openConnection();
-	InputStream in = con.getInputStream();
-	String encoding = con.getContentEncoding();
-	encoding = encoding == null ? "UTF-8" : encoding;
-	String body = IOUtils.toString(in, encoding);
-	JsonObject entireJSON = new JsonParser().parse(body).getAsJsonObject();
-        JsonArray json = entireJSON.getAsJsonArray();
-	
-        ArrayList<String> options = new ArrayList<String>();
-        for()
+
+    public static String define(String word) throws Exception {
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        DocumentBuilder db = dbf.newDocumentBuilder();
+        Document doc = db.parse(new URL(baseURL + word + "?key=" + APIkey).openStream());
+        doc.getElementsByTagName("entry");
+        String definition;
+        try {
+        	definition = doc.getElementsByTagName("def").item(0).getTextContent();
+        }catch(Exception e) {
+        	
+        	definition = doc.getElementsByTagName("def").item(0).getTextContent();
+        }
+        try{
+        	definition = definition.replaceAll(":", "");
+        }catch(Exception e) {
+        	
+        }
+        return definition;
         
+        
+
     }
 }

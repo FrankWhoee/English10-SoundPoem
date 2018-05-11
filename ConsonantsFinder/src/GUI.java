@@ -520,13 +520,18 @@ public class GUI extends javax.swing.JFrame {
 
     private void displayListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_displayListMouseClicked
         String selected = displayList.getSelectedValue();
-        String definition = getDefinition(selected);
+        String definition = "";
+        try{
+            definition = DictionaryAPI.define(selected);
+        }catch(Exception e){
+            definition = "Error: Not connected to internet, or word does not exist.";
+        }
         definition = fitString(definition);
+        textDict.setText(definition);
         word W = new word(selected,0);
         W.calcScore(textIdeal);
         textScore.setText("" + W.score);
         textScoreWord.setText("Word: " + W.word);
-        textDict.setText(definition);
     }//GEN-LAST:event_displayListMouseClicked
 
     private void textScoreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textScoreActionPerformed
@@ -571,7 +576,12 @@ public class GUI extends javax.swing.JFrame {
     }//GEN-LAST:event_textDefActionPerformed
 
     private void buttonDefActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonDefActionPerformed
-        String definition = getDefinition(textDef.getText());
+        String definition = "";
+        try{
+            definition = DictionaryAPI.define(textDef.getText());
+        }catch(Exception e){
+            definition = "Error: Not connected to internet, or word does not exist.";
+        }
         definition = fitString(definition);
         textDict.setText(definition);
     }//GEN-LAST:event_buttonDefActionPerformed
