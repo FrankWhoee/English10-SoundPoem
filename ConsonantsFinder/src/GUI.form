@@ -91,6 +91,12 @@
                           <Component id="jLabel3" alignment="0" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="32767" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="textCustomDict" min="-2" pref="173" max="-2" attributes="0"/>
+                          <Component id="buttonCustomDictionary" min="-2" pref="128" max="-2" attributes="0"/>
+                          <Component id="jLabel7" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace min="-2" pref="9" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="1" max="-2" attributes="0">
                           <Component id="textDef" max="32767" attributes="0"/>
                           <Component id="buttonDef" alignment="1" pref="229" max="32767" attributes="0"/>
@@ -100,7 +106,7 @@
                   <Group type="102" alignment="1" attributes="0">
                       <Component id="buttonPath" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="buttonRefresh" min="-2" pref="124" max="-2" attributes="0"/>
+                      <Component id="buttonRefresh" min="-2" pref="109" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="buttonImportCommon" min="-2" pref="211" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
@@ -122,7 +128,7 @@
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jScrollPane1" pref="784" max="32767" attributes="0"/>
+                  <Component id="jScrollPane1" pref="806" max="32767" attributes="0"/>
                   <Group type="102" attributes="0">
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
@@ -167,10 +173,13 @@
                           <Component id="buttonImportCommon" alignment="3" min="-2" pref="35" max="-2" attributes="0"/>
                           <Component id="buttonImportAll" alignment="3" min="-2" pref="35" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" attributes="0">
-                              <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
+                          <Group type="102" alignment="0" attributes="0">
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="jLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jLabel7" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="labelIdeal" min="-2" max="-2" attributes="0"/>
                               <EmptySpace min="-2" pref="9" max="-2" attributes="0"/>
@@ -178,12 +187,18 @@
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="labelWordImport" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <Group type="102" attributes="0">
+                          <Group type="102" alignment="0" attributes="0">
                               <Component id="jLabel6" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="textDef" min="-2" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="textDef" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="textCustomDict" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="buttonDef" min="-2" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="buttonDef" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="buttonCustomDictionary" alignment="3" min="-2" pref="35" max="-2" attributes="0"/>
+                              </Group>
                           </Group>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
@@ -430,6 +445,21 @@
     <Component class="javax.swing.JLabel" name="labelWordImport">
       <Properties>
         <Property name="text" type="java.lang.String" value="Word Import:"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JButton" name="buttonCustomDictionary">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Save"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="buttonCustomDictionaryActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JTextField" name="textCustomDict">
+    </Component>
+    <Component class="javax.swing.JLabel" name="jLabel7">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Use a custom dictionary:"/>
       </Properties>
     </Component>
   </SubComponents>
