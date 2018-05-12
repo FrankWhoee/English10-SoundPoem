@@ -10,15 +10,13 @@
 
 # Instructions for swapping dictionaries/word files (optional):
 
--Rename new dictionary "common.txt" NOTE: Dictionary must be in a purely text form for this to work with each word having its own line.
+-Add your dictionary in the `lib` folder NOTE: Dictionary must be in a purely text form for this to work with each word having its own line.
 
--Delete old "common.txt" file that was in the src folder.
+-Enter the name of your new custom dictionary file in the box that is labelled: `Use a custom dictionary`
 
--Move the new "common.txt" file into src.
+-Click `Save`
 
--Close the ConsonantsFinder.jar program and open it up again by double clicking it
-
--Enter your name in the box and click 'Start'
+-Click `Start` to recalculate your name.
 
 # Instructions for users adept in the command line:
 
